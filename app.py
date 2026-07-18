@@ -27,12 +27,11 @@ from flask import (
 )
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from predict import ModelNotReadyError, PredictionService
-from preprocess import DATASET_FILENAME, DISPLAY_NAMES, FORM_FIELDS, clean_telco_dataframe, load_telco_dataset
+from preprocess import DATASET_FILENAME, FORM_FIELDS, load_telco_dataset
 
 BASE_DIR = Path(__file__).resolve().parent
 INSTANCE_DIR = BASE_DIR / "instance"
@@ -568,7 +567,6 @@ def api_customers():
 
 
 @app.route("/api/dashboard")
-@app.route("/api/dashboard")
 @login_required
 def api_dashboard():
     payload = build_dashboard_payload(session["user_id"])
@@ -582,6 +580,8 @@ def delete_prediction(prediction_id: int | None = None):
     if prediction_id is None:
         request_payload = request.get_json(silent=True) or request.args.to_dict()
         prediction_id = int(request_payload.get("id", 0))
+    if not prediction_id:
+        return jsonify({"error": "Prediction id is required."}), 400
 
     db = get_db()
     db.execute(
