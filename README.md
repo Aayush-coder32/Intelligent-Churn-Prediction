@@ -117,6 +117,14 @@ Saved artifacts:
 pip install -r requirements.txt
 ```
 
+Windows/Conda-friendly option:
+
+```powershell
+conda env create -f environment.yml
+conda activate churniq311
+python -m pip install --upgrade pip setuptools wheel
+```
+
 2. Add the dataset to `dataset/`.
 
 3. Train the model:
