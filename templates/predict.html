@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Predict | ChurnIQ{% endblock %}
+{% block page_title %}Churn Prediction Studio{% endblock %}
+
+{% block content %}
+<section class="predict-layout">
+    <div class="glass-panel form-card">
+        <div class="section-head">
+            <h3>Customer Profile</h3>
+            <p>Enter telecom account attributes and generate a churn decision with explanations.</p>
+        </div>
+        <form id="predictionForm" class="row g-3">
+            {% for field in form_fields %}
+            <div class="col-md-6">
+                <label class="form-label">{{ field.label }}</label>
+                {% if field.type == "select" %}
+                <select class="form-select" name="{{ field.name }}" required>
+                    {% for option in field.options %}
+                    <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+                {% elif field.type == "number" %}
+                <input
+                    class="form-control"
+                    type="number"
+                    name="{{ field.name }}"
+                    min="{{ field.min }}"
+                    max="{{ field.max }}"
+                    step="{{ field.step }}"
+                    required
+                >
+                {% else %}
+                <input class="form-control" type="text" name="{{ field.name }}" placeholder="{{ field.placeholder or '' }}">
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="col-12 d-flex gap-3 flex-wrap">
+                <button class="btn btn-accent" type="submit">Predict Churn</button>
+                <button class="btn btn-outline-light" type="reset">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="predictionResult" class="glass-panel result-card">
+        <div class="section-head">
+            <h3>Prediction Output</h3>
+            <p>Your prediction summary will appear here after scoring.</p>
+        </div>
+        <div class="placeholder-copy">
+            <p>Probability, risk level, SHAP-style drivers, and retention recommendations are generated in one response.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/predict.js') }}"></script>
+{% endblock %}

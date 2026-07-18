@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}History | ChurnIQ{% endblock %}
+{% block page_title %}Prediction History{% endblock %}
+
+{% block content %}
+<section class="glass-panel history-card">
+    <div class="history-toolbar">
+        <div>
+            <h3>Stored Predictions</h3>
+            <p>Search, review, download, or delete previous prediction runs.</p>
+        </div>
+        <div class="toolbar-actions">
+            <input id="historySearch" class="form-control" type="search" placeholder="Search customer name">
+            <a href="{{ url_for('export_history') }}" class="btn btn-accent">Export CSV</a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle table-dark table-hover history-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Prediction</th>
+                    <th>Probability</th>
+                    <th>Risk Level</th>
+                    <th>Timestamp</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <tr>
+                    <td colspan="6" class="text-center text-secondary">No predictions available yet.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %}

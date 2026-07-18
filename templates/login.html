@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Login | ChurnIQ{% endblock %}
+{% block auth_title %}Welcome back to ChurnIQ{% endblock %}
+
+{% block content %}
+<section class="auth-wrapper">
+    <div class="hero-copy">
+        <span class="badge text-bg-light">Predict. Explain. Retain.</span>
+        <h2>Customer churn prediction built like a real product.</h2>
+        <p>
+            Sign in to access the analytics dashboard, prediction engine, PDF reporting,
+            REST API endpoints, and historical decision trail.
+        </p>
+    </div>
+
+    <div class="glass-panel auth-card">
+        <h3>Login</h3>
+        <form method="post" class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" name="email" required>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Password</label>
+                <input class="form-control" type="password" name="password" required>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-accent w-100" type="submit">Login</button>
+            </div>
+        </form>
+        <p class="mt-3 small text-secondary">
+            No account yet? <a href="{{ url_for('signup') }}">Create one</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

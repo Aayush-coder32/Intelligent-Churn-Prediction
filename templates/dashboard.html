@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | ChurnIQ{% endblock %}
+{% block page_title %}Retention Analytics Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-grid">
+    <div class="metric-card glass-panel">
+        <p>Total Customers</p>
+        <h2 id="cardTotalCustomers">0</h2>
+    </div>
+    <div class="metric-card glass-panel">
+        <p>Total Predictions</p>
+        <h2 id="cardTotalPredictions">0</h2>
+    </div>
+    <div class="metric-card glass-panel">
+        <p>High Risk Customers</p>
+        <h2 id="cardHighRisk">0</h2>
+    </div>
+    <div class="metric-card glass-panel">
+        <p>Average Monthly Charges</p>
+        <h2 id="cardMonthlyCharges">$0.00</h2>
+    </div>
+    <div class="metric-card glass-panel">
+        <p>Churn Rate</p>
+        <h2 id="cardChurnRate">0%</h2>
+    </div>
+</section>
+
+<section class="chart-grid">
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Monthly Predictions</h3>
+            <p>History volume over time</p>
+        </div>
+        <canvas id="monthlyPredictionsChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Churn Trend</h3>
+            <p>High-intent churn signals over time</p>
+        </div>
+        <canvas id="churnTrendChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Contract Distribution</h3>
+            <p>Prediction history or source dataset breakdown</p>
+        </div>
+        <canvas id="contractChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Gender Distribution</h3>
+            <p>Population composition snapshot</p>
+        </div>
+        <canvas id="genderChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Payment Methods</h3>
+            <p>Payment behavior overview</p>
+        </div>
+        <canvas id="paymentChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Internet Service</h3>
+            <p>Connectivity mix across customers</p>
+        </div>
+        <canvas id="internetChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Monthly Charges</h3>
+            <p>Charge bucket distribution</p>
+        </div>
+        <canvas id="chargesChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card">
+        <div class="section-head">
+            <h3>Tenure Bands</h3>
+            <p>Customer longevity by bucket</p>
+        </div>
+        <canvas id="tenureChart"></canvas>
+    </div>
+    <div class="glass-panel chart-card api-card">
+        <div class="section-head">
+            <h3>REST API</h3>
+            <p>Endpoints available in this app</p>
+        </div>
+        <div class="endpoint-list">
+            <code>POST /api/predict</code>
+            <code>GET /api/history</code>
+            <code>GET /api/dashboard</code>
+            <code>GET /api/customers</code>
+            <code>DELETE /api/prediction/&lt;id&gt;</code>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

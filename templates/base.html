@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ChurnIQ{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="app-shell">
+        {% if current_user %}
+        <aside class="sidebar glass-panel">
+            <a href="{{ url_for('dashboard') }}" class="brand-mark">
+                <span class="brand-chip">CQ</span>
+                <div>
+                    <strong>ChurnIQ</strong>
+                    <small>Retention Intelligence</small>
+                </div>
+            </a>
+            <nav class="nav-stack">
+                <a href="{{ url_for('dashboard') }}" class="nav-link-custom">Dashboard</a>
+                <a href="{{ url_for('predict_page') }}" class="nav-link-custom">Predict</a>
+                <a href="{{ url_for('history_page') }}" class="nav-link-custom">History</a>
+                <a href="{{ url_for('api_dashboard') }}" class="nav-link-custom" target="_blank" rel="noreferrer">REST API</a>
+            </nav>
+            <div class="sidebar-meta">
+                <p class="meta-label">Signed in as</p>
+                <h6>{{ current_user["full_name"] }}</h6>
+                <p class="meta-email">{{ current_user["email"] }}</p>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
+        </aside>
+        {% endif %}
+
+        <main class="content-area {% if not current_user %}auth-layout{% endif %}">
+            <div class="top-bar">
+                <div>
+                    {% if current_user %}
+                    <p class="eyebrow">Production-ready ML SaaS</p>
+                    <h1 class="page-title">{% block page_title %}Customer Churn Command Center{% endblock %}</h1>
+                    {% else %}
+                    <p class="eyebrow">Telecom churn intelligence</p>
+                    <h1 class="page-title">{% block auth_title %}Secure access to your retention workspace{% endblock %}</h1>
+                    {% endif %}
+                </div>
+                <button id="themeToggle" class="theme-toggle" type="button">Toggle Theme</button>
+            </div>
+
+            {% if not model_ready and current_user %}
+            <div class="alert alert-warning glass-panel border-0">
+                Model assets are not trained yet. Add <code>{{ "dataset/" ~ "WA_Fn-UseC_-Telco-Customer-Churn.csv" }}</code> and run <code>python train.py</code>.
+            </div>
+            {% endif %}
+
+            {% if not dataset_ready and current_user %}
+            <div class="alert alert-info glass-panel border-0">
+                Dataset not found yet. Dashboard cards will still work with prediction history, and EDA will populate once the Kaggle CSV is added.
+            </div>
+            {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div id="flashPayload" data-messages='{{ messages | tojson }}'></div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="glass-panel loading-card">
+            <div class="spinner-border text-light" role="status"></div>
+            <p>Crunching retention signals...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
