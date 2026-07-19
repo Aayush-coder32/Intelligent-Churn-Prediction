@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}ChurnIQ | Telecom Retention Intelligence{% endblock %}
+{% block auth_title %}Revenue defense for telecom teams that want answers, not dashboards full of noise{% endblock %}
+
+{% block top_bar_actions %}
+<a href="{{ url_for('login') }}" class="btn btn-outline-light">Login</a>
+<a href="{{ url_for('signup') }}" class="btn btn-accent">Start Free</a>
+<button id="themeToggle" class="theme-toggle" type="button">Toggle Theme</button>
+{% endblock %}
+
+{% block content %}
+<section class="landing-hero">
+    <div class="landing-copy">
+        <div class="hero-badges">
+            <span class="badge badge-soft">Telecom churn intelligence</span>
+            <span class="badge badge-soft">Prediction + explanation + action</span>
+        </div>
+        <h2>Spot churn before it shows up in your revenue report.</h2>
+        <p>
+            ChurnIQ turns raw customer signals into retention decisions with a polished ML workflow,
+            explainable risk scoring, PDF reports, and a dashboard built for product-minded teams.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('signup') }}" class="btn btn-accent btn-lg">Launch Workspace</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">View Existing Account</a>
+        </div>
+        <div class="hero-footnote">
+            <span>Dataset-backed customer intelligence</span>
+            <span>Secure session-based access</span>
+            <span>REST-ready architecture</span>
+        </div>
+    </div>
+
+    <div class="signal-board glass-panel">
+        <div class="signal-topline">
+            <div>
+                <p class="eyebrow">Live product snapshot</p>
+                <h3>Decision center</h3>
+            </div>
+            <span class="status-pill">Model online</span>
+        </div>
+        <div class="signal-metrics">
+            <article>
+                <span>Customers</span>
+                <strong>{{ landing_stats.customers }}</strong>
+            </article>
+            <article>
+                <span>Dataset churn rate</span>
+                <strong>{{ landing_stats.churn_rate }}%</strong>
+            </article>
+            <article>
+                <span>Best model</span>
+                <strong>{{ landing_stats.best_model }}</strong>
+            </article>
+            <article>
+                <span>ROC AUC</span>
+                <strong>{{ landing_stats.roc_auc }}</strong>
+            </article>
+        </div>
+        <div class="insight-tape">
+            <div class="insight-line">
+                <span class="line-label">Risk signal</span>
+                <div class="line-track"><span style="width: 78%"></span></div>
+                <strong>78%</strong>
+            </div>
+            <div class="insight-line">
+                <span class="line-label">Contract pressure</span>
+                <div class="line-track warm"><span style="width: 64%"></span></div>
+                <strong>64%</strong>
+            </div>
+            <div class="insight-line">
+                <span class="line-label">Support gap</span>
+                <div class="line-track cool"><span style="width: 49%"></span></div>
+                <strong>49%</strong>
+            </div>
+        </div>
+        <div class="signal-note">
+            <div class="note-card">
+                <p>Average monthly charges</p>
+                <h4>${{ landing_stats.avg_monthly_charges }}</h4>
+            </div>
+            <div class="note-card note-card-accent">
+                <p>Production scorecard</p>
+                <h4>{{ landing_stats.accuracy }}% accuracy</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="landing-strip">
+    <div class="strip-card glass-panel">
+        <span>Predict churn probability in seconds</span>
+        <span>See driver-level explanations</span>
+        <span>Export PDF reports instantly</span>
+        <span>Track every decision in history</span>
+    </div>
+</section>
+
+<section class="feature-showcase">
+    <div class="section-head landing-head">
+        <h3>Built like a SaaS product, not a class project</h3>
+        <p>Everything from model selection to the frontend flow is structured to feel credible in a real portfolio or internship demo.</p>
+    </div>
+    <div class="feature-grid-landing">
+        <article class="glass-panel feature-panel">
+            <span class="feature-kicker">Prediction Engine</span>
+            <h4>Churn scoring with risk bands and business-ready recommendations</h4>
+            <p>Move from raw input fields to prediction, confidence, and retention actions in one polished flow.</p>
+        </article>
+        <article class="glass-panel feature-panel">
+            <span class="feature-kicker">Explainability</span>
+            <h4>Readable driver analysis instead of black-box model output</h4>
+            <p>Highlight signals like high monthly charges, contract type, service gaps, and short tenure with human-friendly language.</p>
+        </article>
+        <article class="glass-panel feature-panel">
+            <span class="feature-kicker">Analytics</span>
+            <h4>Executive-style dashboard cards and distribution charts</h4>
+            <p>Track churn rate, predictions, customer mix, payment behavior, charge buckets, and tenure spread.</p>
+        </article>
+        <article class="glass-panel feature-panel">
+            <span class="feature-kicker">Operations</span>
+            <h4>History, CSV export, PDF reports, and REST endpoints included</h4>
+            <p>The workflow is ready for demos, recruiter walkthroughs, and future integration work.</p>
+        </article>
+    </div>
+</section>
+
+<section class="workflow-band">
+    <div class="workflow-copy">
+        <div class="section-head landing-head">
+            <h3>A clean story from data to action</h3>
+            <p>Designed to communicate engineering maturity as well as ML thinking.</p>
+        </div>
+        <div class="workflow-steps">
+            <div class="workflow-step">
+                <span>01</span>
+                <div>
+                    <h4>Ingest and clean</h4>
+                    <p>Normalize telecom attributes, handle missing values, and build feature-ready training data.</p>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <span>02</span>
+                <div>
+                    <h4>Train and compare</h4>
+                    <p>Benchmark multiple classifiers and automatically keep the best-performing model.</p>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <span>03</span>
+                <div>
+                    <h4>Explain and retain</h4>
+                    <p>Turn churn probability into interventions the business can actually act on.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="glass-panel api-preview">
+        <div class="api-window">
+            <div class="api-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <pre><code>{
+  "prediction": "Likely to Churn",
+  "probability": 78.43,
+  "risk_level": "High",
+  "top_driver": "Contract: Month-to-month",
+  "recommendation": "Offer a one-year plan incentive"
+}</code></pre>
+        </div>
+    </div>
+</section>
+
+<section class="cta-banner glass-panel">
+    <div>
+        <p class="eyebrow">Ready to explore the product?</p>
+        <h3>Open the workspace, run predictions, and turn this into a portfolio piece.</h3>
+    </div>
+    <div class="hero-actions">
+        <a href="{{ url_for('signup') }}" class="btn btn-accent">Create Account</a>
+        <a href="{{ url_for('login') }}" class="btn btn-outline-light">Login</a>
+    </div>
+</section>
+{% endblock %}

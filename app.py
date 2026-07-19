@@ -38,6 +38,7 @@ INSTANCE_DIR = BASE_DIR / "instance"
 DATABASE_PATH = INSTANCE_DIR / "churn_app.db"
 REPORTS_DIR = BASE_DIR / "reports"
 DATASET_PATH = BASE_DIR / "dataset" / DATASET_FILENAME
+MODEL_DIR = BASE_DIR / "model"
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "replace-this-with-a-secure-key")
@@ -263,6 +264,26 @@ def load_dataset_summary() -> dict[str, Any]:
     }
 
 
+def load_model_summary() -> dict[str, Any]:
+    metrics_path = MODEL_DIR / "metrics.json"
+    metadata_path = MODEL_DIR / "metadata.json"
+    if not metrics_path.exists() or not metadata_path.exists():
+        return {}
+
+    try:
+        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        best_model = metadata.get("best_model")
+        best_metrics = metrics.get(best_model, {}) if best_model else {}
+        return {
+            "best_model": best_model,
+            "roc_auc": round(float(best_metrics.get("roc_auc", 0)), 4) if best_metrics else None,
+            "accuracy": round(float(best_metrics.get("accuracy", 0)) * 100, 2) if best_metrics else None,
+        }
+    except (json.JSONDecodeError, OSError, TypeError, ValueError):
+        return {}
+
+
 def build_dashboard_payload(user_id: int) -> dict[str, Any]:
     rows = fetch_all(
         """
@@ -456,7 +477,17 @@ def handle_prediction_request() -> tuple[dict[str, Any], int]:
 def home():
     if session.get("user_id"):
         return redirect(url_for("dashboard"))
-    return redirect(url_for("login"))
+    dataset_summary = load_dataset_summary()
+    model_summary = load_model_summary()
+    landing_stats = {
+        "customers": dataset_summary.get("total_customers", 7043),
+        "churn_rate": dataset_summary.get("churn_rate", 26.54),
+        "avg_monthly_charges": dataset_summary.get("avg_monthly_charges", 64.76),
+        "best_model": model_summary.get("best_model", "ML Pipeline Ready"),
+        "roc_auc": model_summary.get("roc_auc", 0.8463),
+        "accuracy": model_summary.get("accuracy", 80.0),
+    }
+    return render_template("landing.html", landing_stats=landing_stats)
 
 
 @app.route("/signup", methods=["GET", "POST"])

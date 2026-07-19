@@ -3,15 +3,31 @@
 {% block title %}Signup | ChurnIQ{% endblock %}
 {% block auth_title %}Create your ChurnIQ workspace{% endblock %}
 
+{% block top_bar_actions %}
+<a href="{{ url_for('home') }}" class="btn btn-outline-light">Home</a>
+<a href="{{ url_for('login') }}" class="btn btn-accent">Login</a>
+<button id="themeToggle" class="theme-toggle" type="button">Toggle Theme</button>
+{% endblock %}
+
 {% block content %}
 <section class="auth-wrapper">
     <div class="hero-copy">
-        <span class="badge text-bg-light">Production-ready Flask + ML</span>
+        <span class="badge badge-soft">Production-ready Flask + ML</span>
         <h2>Launch a retention analytics workspace in minutes.</h2>
         <p>
             Create an account to manage churn predictions, review feature-level explanations,
             export decision history, and monitor retention trends.
         </p>
+        <div class="auth-highlights">
+            <div class="glass-panel auth-mini-card">
+                <strong>Explainable results</strong>
+                <span>Readable churn drivers and confidence context for every prediction.</span>
+            </div>
+            <div class="glass-panel auth-mini-card">
+                <strong>Resume-worthy flow</strong>
+                <span>Authentication, history, reporting, charts, and API access included.</span>
+            </div>
+        </div>
     </div>
 
     <div class="glass-panel auth-card">

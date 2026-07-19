@@ -12,7 +12,7 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <div class="app-shell">
+    <div class="app-shell {% if not current_user %}public-shell{% endif %}">
         {% if current_user %}
         <aside class="sidebar glass-panel">
             <a href="{{ url_for('dashboard') }}" class="brand-mark">
@@ -48,7 +48,11 @@
                     <h1 class="page-title">{% block auth_title %}Secure access to your retention workspace{% endblock %}</h1>
                     {% endif %}
                 </div>
-                <button id="themeToggle" class="theme-toggle" type="button">Toggle Theme</button>
+                <div class="top-bar-actions">
+                    {% block top_bar_actions %}
+                    <button id="themeToggle" class="theme-toggle" type="button">Toggle Theme</button>
+                    {% endblock %}
+                </div>
             </div>
 
             {% if not model_ready and current_user %}

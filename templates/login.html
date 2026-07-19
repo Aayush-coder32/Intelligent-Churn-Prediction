@@ -3,15 +3,31 @@
 {% block title %}Login | ChurnIQ{% endblock %}
 {% block auth_title %}Welcome back to ChurnIQ{% endblock %}
 
+{% block top_bar_actions %}
+<a href="{{ url_for('home') }}" class="btn btn-outline-light">Home</a>
+<a href="{{ url_for('signup') }}" class="btn btn-accent">Create Account</a>
+<button id="themeToggle" class="theme-toggle" type="button">Toggle Theme</button>
+{% endblock %}
+
 {% block content %}
 <section class="auth-wrapper">
     <div class="hero-copy">
-        <span class="badge text-bg-light">Predict. Explain. Retain.</span>
-        <h2>Customer churn prediction built like a real product.</h2>
+        <span class="badge badge-soft">Predict. Explain. Retain.</span>
+        <h2>Step back into the retention cockpit.</h2>
         <p>
             Sign in to access the analytics dashboard, prediction engine, PDF reporting,
             REST API endpoints, and historical decision trail.
         </p>
+        <div class="auth-highlights">
+            <div class="glass-panel auth-mini-card">
+                <strong>Dashboard cards</strong>
+                <span>Customer mix, churn trend, and charge buckets in one view.</span>
+            </div>
+            <div class="glass-panel auth-mini-card">
+                <strong>Prediction studio</strong>
+                <span>Risk score, explanations, and recommendations with export support.</span>
+            </div>
+        </div>
     </div>
 
     <div class="glass-panel auth-card">
