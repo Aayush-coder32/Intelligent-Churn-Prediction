@@ -1,6 +1,6 @@
 # ChurnNet: Customer Churn Prediction System
 
-ChurnNet is a production-style customer churn prediction platform built with Flask, scikit-learn, SQLite, Bootstrap, Chart.js, and SHAP-style explanations. It predicts churn risk for telecom customers, explains the main drivers behind each prediction, stores prediction history, generates PDF reports, and exposes REST endpoints for programmatic access.
+ChurnNet is a production-style customer churn prediction platform built with Flask, scikit-learn, SQLite/PostgreSQL, Bootstrap, Chart.js, and SHAP-style explanations. It predicts churn risk for telecom customers, explains the main drivers behind each prediction, stores prediction history, generates PDF reports, and exposes REST endpoints for programmatic access.
 
 ## Highlights
 
@@ -20,6 +20,7 @@ ChurnNet is a production-style customer churn prediction platform built with Fla
 - Python
 - Flask
 - SQLite
+- PostgreSQL
 - Pandas
 - NumPy
 - Scikit-Learn
@@ -187,6 +188,16 @@ Open:
 http://127.0.0.1:5000
 ```
 
+## Database Modes
+
+ChurnNet now supports two database modes:
+
+- Local development: SQLite at `instance/churn_app.db`
+- Deployment: PostgreSQL via `DATABASE_URL`
+
+If `DATABASE_URL` is set, the app automatically uses PostgreSQL and creates the required tables at startup.
+If `DATABASE_URL` is not set, it falls back to local SQLite.
+
 ## Product Features
 
 ### Authentication
@@ -288,8 +299,19 @@ gunicorn app:app
 5. Add environment variables:
 
 - `SECRET_KEY`
+- `DATABASE_URL`
 
-6. Make sure model artifacts are created before deployment, or add the dataset and run `python train.py` during your release workflow.
+For free deployment, use an external Postgres provider such as Neon or Supabase and paste the connection string into `DATABASE_URL`.
+
+Example:
+
+```text
+postgresql://username:password@host/database?sslmode=require
+```
+
+6. Set `PYTHON_VERSION` to a supported `3.11.x` version in Render.
+7. Make sure model artifacts are created before deployment, or add the dataset and run `python train.py` during your release workflow.
+8. Because free Render web services do not support persistent disks, PostgreSQL is the recommended way to persist signup users and prediction history on free hosting.
 
 ## Suggested Demo Assets
 
