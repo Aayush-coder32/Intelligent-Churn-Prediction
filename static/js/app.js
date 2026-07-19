@@ -54,11 +54,11 @@ function handleApiError(error, fallbackTitle) {
 
 function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("churniq-theme", theme);
+    localStorage.setItem("churnnet-theme", theme);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("churniq-theme") || "light";
+    const savedTheme = localStorage.getItem("churnnet-theme") || localStorage.getItem("churniq-theme") || "light";
     applyTheme(savedTheme);
 
     const themeToggle = document.getElementById("themeToggle");
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-window.ChurnIQ = {
+window.ChurnNet = {
     handleApiError,
     parseApiResponse,
     setLoadingState,
