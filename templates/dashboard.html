@@ -28,26 +28,55 @@
 </section>
 
 <section class="chart-grid">
-    <div class="glass-panel chart-card">
+    <div class="glass-panel chart-card chart-card-spotlight chart-card-wide">
         <div class="section-head">
             <h3>Monthly Predictions</h3>
-            <p>History volume over time</p>
+            <p>Volume momentum, busiest scoring periods, and throughput rhythm</p>
+        </div>
+        <div class="chart-metric-row">
+            <div class="chart-metric-pill">
+                <span>Total Volume</span>
+                <strong id="monthlyVolumeTotal">0</strong>
+            </div>
+            <div class="chart-metric-pill">
+                <span>Peak Period</span>
+                <strong id="monthlyPeakPeriod">-</strong>
+            </div>
+            <div class="chart-metric-pill">
+                <span>Active Windows</span>
+                <strong id="monthlyActiveWindows">0</strong>
+            </div>
         </div>
         <canvas id="monthlyPredictionsChart"></canvas>
     </div>
-    <div class="glass-panel chart-card">
+    <div class="glass-panel chart-card chart-card-spotlight">
         <div class="section-head">
             <h3>Churn Trend</h3>
-            <p>High-intent churn signals over time</p>
+            <p>Alert counts plus churn intensity across each recorded period</p>
+        </div>
+        <div class="chart-metric-row chart-metric-row-compact">
+            <div class="chart-metric-pill">
+                <span>Highest Spike</span>
+                <strong id="churnSpikeValue">0</strong>
+            </div>
+            <div class="chart-metric-pill">
+                <span>Average Alert Rate</span>
+                <strong id="churnAverageRate">0%</strong>
+            </div>
         </div>
         <canvas id="churnTrendChart"></canvas>
     </div>
-    <div class="glass-panel chart-card">
+    <div class="glass-panel chart-card chart-card-spotlight">
         <div class="section-head">
             <h3>Contract Distribution</h3>
-            <p>Prediction history or source dataset breakdown</p>
+            <p>See which contract mix dominates the current customer base</p>
         </div>
-        <canvas id="contractChart"></canvas>
+        <div class="contract-chart-layout">
+            <div class="contract-chart-canvas">
+                <canvas id="contractChart"></canvas>
+            </div>
+            <div id="contractLegend" class="contract-legend"></div>
+        </div>
     </div>
     <div class="glass-panel chart-card">
         <div class="section-head">
