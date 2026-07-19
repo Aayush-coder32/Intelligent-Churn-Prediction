@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}ChurnNet | Telecom Retention Intelligence{% endblock %}
-{% block auth_title %}Revenue defense for telecom teams that want answers, not dashboards full of noise{% endblock %}
+{% block title %}ChurnNet | AI Retention Command Layer{% endblock %}
+{% block auth_title %}AI retention command layer for telecom teams{% endblock %}
 
 {% block top_bar_actions %}
 <a href="{{ url_for('login') }}" class="btn btn-outline-light">Login</a>
@@ -10,176 +10,287 @@
 {% endblock %}
 
 {% block content %}
-<section class="landing-hero">
-    <div class="landing-copy">
-        <div class="hero-badges">
-            <span class="badge badge-soft">Telecom churn intelligence</span>
-            <span class="badge badge-soft">Prediction + explanation + action</span>
+<section class="landing-v2">
+    <div class="landing-stage">
+        <div class="landing-stage-copy">
+            <div class="hero-badges">
+                <span class="badge badge-soft">AI churn command layer</span>
+                <span class="badge badge-soft">Explainable predictions + save plays</span>
+            </div>
+            <p class="landing-overline">Redesigned for a sharper, more premium first impression</p>
+            <h2>See churn risk early and move from warning to action in one operator-grade workspace.</h2>
+            <p class="landing-lead">
+                ChurnNet combines model benchmarking, live scoring, driver analysis, PDF reporting,
+                and decision history into a SaaS-like experience that feels ready for demos, portfolios,
+                and serious product storytelling.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ url_for('signup') }}" class="btn btn-accent btn-lg">Launch Workspace</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Open Existing Account</a>
+            </div>
+            <div class="landing-proof-list">
+                <article class="landing-proof-card">
+                    <strong>Production-minded flow</strong>
+                    <span>Auth, history, exports, and API coverage already connected.</span>
+                </article>
+                <article class="landing-proof-card">
+                    <strong>Readable intelligence</strong>
+                    <span>Risk scores translate into drivers and practical retention moves.</span>
+                </article>
+                <article class="landing-proof-card">
+                    <strong>Demo-ready polish</strong>
+                    <span>Designed to look credible in a recruiter walkthrough or showcase.</span>
+                </article>
+            </div>
         </div>
-        <h2>Spot churn before it shows up in your revenue report.</h2>
-        <p>
-            ChurnNet turns raw customer signals into retention decisions with a polished ML workflow,
-            explainable risk scoring, PDF reports, and a dashboard built for product-minded teams.
-        </p>
-        <div class="hero-actions">
-            <a href="{{ url_for('signup') }}" class="btn btn-accent btn-lg">Launch Workspace</a>
-            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">View Existing Account</a>
-        </div>
-        <div class="hero-footnote">
-            <span>Dataset-backed customer intelligence</span>
-            <span>Secure session-based access</span>
-            <span>REST-ready architecture</span>
+
+        <div class="landing-stage-board glass-panel">
+            <div class="landing-grid-glow landing-grid-glow-a"></div>
+            <div class="landing-grid-glow landing-grid-glow-b"></div>
+            <div class="board-shell">
+                <div class="board-header">
+                    <div>
+                        <p class="eyebrow">Mission control</p>
+                        <h3>Priority save queue</h3>
+                    </div>
+                    <span class="status-pill">Model online</span>
+                </div>
+                <div class="board-score-row">
+                    <div class="board-score-orb">
+                        <span>Dataset churn pressure</span>
+                        <strong>{{ landing_stats.churn_rate }}%</strong>
+                        <small>baseline risk across the customer base</small>
+                    </div>
+                    <div class="board-score-copy">
+                        <p>
+                            High-risk accounts can be read through contract type, service mix,
+                            tenure compression, and price sensitivity before the team reacts.
+                        </p>
+                        <div class="board-chip-row">
+                            <span>Driver-level readout</span>
+                            <span>Portfolio-grade UI</span>
+                            <span>REST-friendly structure</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="board-grid">
+                    <article>
+                        <span>Tracked customers</span>
+                        <strong>{{ landing_stats.customers }}</strong>
+                        <p>Cleaned telecom records ready for scoring and visual analysis.</p>
+                    </article>
+                    <article>
+                        <span>Best model</span>
+                        <strong>{{ landing_stats.best_model }}</strong>
+                        <p>Automatically surfaced from the training comparison pipeline.</p>
+                    </article>
+                    <article>
+                        <span>ROC AUC</span>
+                        <strong>{{ landing_stats.roc_auc }}</strong>
+                        <p>Reliable class separation for churn-vs-retain decisions.</p>
+                    </article>
+                    <article>
+                        <span>Average monthly charge</span>
+                        <strong>${{ landing_stats.avg_monthly_charges }}</strong>
+                        <p>Useful context for pricing pressure and intervention costs.</p>
+                    </article>
+                </div>
+                <div class="board-feed">
+                    <div class="feed-card feed-card-alert">
+                        <p>Priority pattern</p>
+                        <h4>Month-to-month + high spend + short tenure</h4>
+                    </div>
+                    <div class="feed-card">
+                        <p>Scorecard accuracy</p>
+                        <h4>{{ landing_stats.accuracy }}% on the current benchmark</h4>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="signal-board glass-panel">
-        <div class="signal-topline">
-            <div>
-                <p class="eyebrow">Live product snapshot</p>
-                <h3>Decision center</h3>
-            </div>
-            <span class="status-pill">Model online</span>
+    <section class="landing-pulse-strip glass-panel" aria-label="Product capabilities">
+        <div class="landing-pulse-track">
+            <span>Predict churn in seconds</span>
+            <span>Trace driver-level explanations</span>
+            <span>Export polished PDF reports</span>
+            <span>Track every scoring decision</span>
+            <span>Surface portfolio-worthy analytics</span>
+            <span>Ship with session-based access</span>
+            <span>Predict churn in seconds</span>
+            <span>Trace driver-level explanations</span>
+            <span>Export polished PDF reports</span>
+            <span>Track every scoring decision</span>
         </div>
-        <div class="signal-metrics">
-            <article>
-                <span>Customers</span>
-                <strong>{{ landing_stats.customers }}</strong>
-            </article>
-            <article>
-                <span>Dataset churn rate</span>
-                <strong>{{ landing_stats.churn_rate }}%</strong>
-            </article>
-            <article>
-                <span>Best model</span>
-                <strong>{{ landing_stats.best_model }}</strong>
-            </article>
-            <article>
-                <span>ROC AUC</span>
-                <strong>{{ landing_stats.roc_auc }}</strong>
-            </article>
-        </div>
-        <div class="insight-tape">
-            <div class="insight-line">
-                <span class="line-label">Risk signal</span>
-                <div class="line-track"><span style="width: 78%"></span></div>
-                <strong>78%</strong>
-            </div>
-            <div class="insight-line">
-                <span class="line-label">Contract pressure</span>
-                <div class="line-track warm"><span style="width: 64%"></span></div>
-                <strong>64%</strong>
-            </div>
-            <div class="insight-line">
-                <span class="line-label">Support gap</span>
-                <div class="line-track cool"><span style="width: 49%"></span></div>
-                <strong>49%</strong>
-            </div>
-        </div>
-        <div class="signal-note">
-            <div class="note-card">
-                <p>Average monthly charges</p>
-                <h4>${{ landing_stats.avg_monthly_charges }}</h4>
-            </div>
-            <div class="note-card note-card-accent">
-                <p>Production scorecard</p>
-                <h4>{{ landing_stats.accuracy }}% accuracy</h4>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-<section class="landing-strip">
-    <div class="strip-card glass-panel">
-        <span>Predict churn probability in seconds</span>
-        <span>See driver-level explanations</span>
-        <span>Export PDF reports instantly</span>
-        <span>Track every decision in history</span>
-    </div>
-</section>
-
-<section class="feature-showcase">
-    <div class="section-head landing-head">
-        <h3>Built like a SaaS product, not a class project</h3>
-        <p>Everything from model selection to the frontend flow is structured to feel credible in a real portfolio or internship demo.</p>
-    </div>
-    <div class="feature-grid-landing">
-        <article class="glass-panel feature-panel">
-            <span class="feature-kicker">Prediction Engine</span>
-            <h4>Churn scoring with risk bands and business-ready recommendations</h4>
-            <p>Move from raw input fields to prediction, confidence, and retention actions in one polished flow.</p>
-        </article>
-        <article class="glass-panel feature-panel">
-            <span class="feature-kicker">Explainability</span>
-            <h4>Readable driver analysis instead of black-box model output</h4>
-            <p>Highlight signals like high monthly charges, contract type, service gaps, and short tenure with human-friendly language.</p>
-        </article>
-        <article class="glass-panel feature-panel">
-            <span class="feature-kicker">Analytics</span>
-            <h4>Executive-style dashboard cards and distribution charts</h4>
-            <p>Track churn rate, predictions, customer mix, payment behavior, charge buckets, and tenure spread.</p>
-        </article>
-        <article class="glass-panel feature-panel">
-            <span class="feature-kicker">Operations</span>
-            <h4>History, CSV export, PDF reports, and REST endpoints included</h4>
-            <p>The workflow is ready for demos, recruiter walkthroughs, and future integration work.</p>
-        </article>
-    </div>
-</section>
-
-<section class="workflow-band">
-    <div class="workflow-copy">
+    <section class="landing-architecture">
         <div class="section-head landing-head">
-            <h3>A clean story from data to action</h3>
-            <p>Designed to communicate engineering maturity as well as ML thinking.</p>
+            <p class="eyebrow">Why the redesign feels stronger</p>
+            <h3>Structured like a real retention product instead of a one-screen ML demo</h3>
+            <p>Each section now reinforces the story from signal capture to operator action with clearer hierarchy, bolder surfaces, and tighter product framing.</p>
         </div>
-        <div class="workflow-steps">
-            <div class="workflow-step">
-                <span>01</span>
-                <div>
-                    <h4>Ingest and clean</h4>
-                    <p>Normalize telecom attributes, handle missing values, and build feature-ready training data.</p>
-                </div>
+        <div class="landing-mosaic-grid">
+            <article class="glass-panel mosaic-card mosaic-card-lg">
+                <span class="mosaic-index">01</span>
+                <h4>One narrative thread from raw customer data to save-play execution</h4>
+                <p>
+                    The experience is designed so a visitor instantly understands the product arc:
+                    ingest data, benchmark models, inspect churn drivers, then act with confidence.
+                </p>
+                <ul class="mosaic-list">
+                    <li>Dataset-backed metrics are visible immediately in the hero.</li>
+                    <li>Model quality and business pressure live in the same visual system.</li>
+                    <li>Each card reads like a product surface, not a disconnected widget.</li>
+                </ul>
+            </article>
+            <article class="glass-panel mosaic-card">
+                <span class="mosaic-index">02</span>
+                <h4>Editorial typography with layered depth</h4>
+                <p>Large compressed headlines, atmospheric gradients, and controlled glass surfaces create a premium landing rhythm.</p>
+            </article>
+            <article class="glass-panel mosaic-card">
+                <span class="mosaic-index">03</span>
+                <h4>Data proof woven into the design</h4>
+                <p>Real customer volume, churn rate, model selection, and scorecard quality are integrated as credibility anchors.</p>
+            </article>
+            <article class="glass-panel mosaic-card">
+                <span class="mosaic-index">04</span>
+                <h4>Operational language over generic AI copy</h4>
+                <p>The page speaks in terms of queues, scorecards, interventions, and account pressure rather than vague intelligence buzzwords.</p>
+            </article>
+            <article class="glass-panel mosaic-card">
+                <span class="mosaic-index">05</span>
+                <h4>Responsive composition that still feels intentional on mobile</h4>
+                <p>Cards stack cleanly, overflow is controlled, and the hero keeps its drama without breaking readability.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="landing-journey">
+        <div class="landing-journey-copy">
+            <div class="section-head landing-head">
+                <p class="eyebrow">Workflow map</p>
+                <h3>Signals become retention decisions in three deliberate moves</h3>
+                <p>The product story stays clean: train intelligently, score quickly, then explain results in language a team can act on.</p>
             </div>
-            <div class="workflow-step">
-                <span>02</span>
-                <div>
-                    <h4>Train and compare</h4>
-                    <p>Benchmark multiple classifiers and automatically keep the best-performing model.</p>
-                </div>
-            </div>
-            <div class="workflow-step">
-                <span>03</span>
-                <div>
-                    <h4>Explain and retain</h4>
-                    <p>Turn churn probability into interventions the business can actually act on.</p>
-                </div>
+            <div class="journey-steps">
+                <article class="journey-step">
+                    <span>01</span>
+                    <div>
+                        <h4>Shape the dataset</h4>
+                        <p>Clean telecom attributes, standardize missing values, and prepare model-ready customer features.</p>
+                    </div>
+                </article>
+                <article class="journey-step">
+                    <span>02</span>
+                    <div>
+                        <h4>Benchmark and select</h4>
+                        <p>Compare multiple classifiers and retain the best performer for the live prediction experience.</p>
+                    </div>
+                </article>
+                <article class="journey-step">
+                    <span>03</span>
+                    <div>
+                        <h4>Explain and intervene</h4>
+                        <p>Convert churn probability into clear reasons, risk bands, and next-step recommendations.</p>
+                    </div>
+                </article>
             </div>
         </div>
-    </div>
-    <div class="glass-panel api-preview">
-        <div class="api-window">
-            <div class="api-dots">
-                <span></span><span></span><span></span>
-            </div>
-            <pre><code>{
+
+        <div class="glass-panel journey-terminal">
+            <div class="terminal-shell">
+                <div class="terminal-ribbon">
+                    <div>
+                        <p class="eyebrow">Decision packet</p>
+                        <h3>Readable machine output</h3>
+                    </div>
+                    <div class="terminal-pills">
+                        <span>API response</span>
+                        <span>Operator summary</span>
+                    </div>
+                </div>
+                <div class="journey-ledger">
+                    <div class="ledger-row">
+                        <span>Contract pressure</span>
+                        <strong>High</strong>
+                    </div>
+                    <div class="ledger-row">
+                        <span>Charge sensitivity</span>
+                        <strong>${{ landing_stats.avg_monthly_charges }}</strong>
+                    </div>
+                    <div class="ledger-row">
+                        <span>Model confidence</span>
+                        <strong>{{ landing_stats.roc_auc }}</strong>
+                    </div>
+                </div>
+                <div class="api-window landing-api-window">
+                    <div class="api-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <pre><code>{
   "prediction": "Likely to Churn",
   "probability": 78.43,
   "risk_level": "High",
   "top_driver": "Contract: Month-to-month",
+  "secondary_driver": "High monthly charges",
   "recommendation": "Offer a one-year plan incentive"
 }</code></pre>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="cta-banner glass-panel">
-    <div>
-        <p class="eyebrow">Ready to explore the product?</p>
-        <h3>Open the workspace, run predictions, and turn this into a portfolio piece.</h3>
-    </div>
-    <div class="hero-actions">
-        <a href="{{ url_for('signup') }}" class="btn btn-accent">Create Account</a>
-        <a href="{{ url_for('login') }}" class="btn btn-outline-light">Login</a>
-    </div>
+    <section class="landing-outcomes">
+        <article class="glass-panel outcome-card">
+            <p class="outcome-label">For product demos</p>
+            <h4>Feels like a command center, not a notebook wrapper</h4>
+            <span>The redesign leans into product clarity, strong hierarchy, and believable interface depth.</span>
+        </article>
+        <article class="glass-panel outcome-card">
+            <p class="outcome-label">For recruiter walkthroughs</p>
+            <h4>Shows both ML thinking and frontend maturity</h4>
+            <span>It communicates that the project is not only trained correctly, but also presented with intention.</span>
+        </article>
+        <article class="glass-panel outcome-card">
+            <p class="outcome-label">For future expansion</p>
+            <h4>Leaves room for live charts, teams, and CRM integrations</h4>
+            <span>The layout is modular enough to evolve into a deeper SaaS dashboard later.</span>
+        </article>
+    </section>
+
+    <section class="landing-final glass-panel">
+        <div class="landing-final-copy">
+            <p class="eyebrow">Ready to open the workspace?</p>
+            <h3>Run predictions, review drivers, and turn the project into a standout portfolio experience.</h3>
+            <p>
+                Start with the landing flow, then move straight into the app for live scoring,
+                historical tracking, and dashboard exploration.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ url_for('signup') }}" class="btn btn-accent">Create Account</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-light">Login</a>
+            </div>
+        </div>
+        <div class="landing-final-stack">
+            <div class="final-mini-card">
+                <span>Prediction flow</span>
+                <strong>Risk score + recommendation</strong>
+            </div>
+            <div class="final-mini-card">
+                <span>Dashboard depth</span>
+                <strong>Charts, cards, and distribution views</strong>
+            </div>
+            <div class="final-mini-card">
+                <span>Reports</span>
+                <strong>PDF export and decision history</strong>
+            </div>
+            <div class="final-mini-card">
+                <span>Architecture</span>
+                <strong>Flask app with future REST integrations</strong>
+            </div>
+        </div>
+    </section>
 </section>
 {% endblock %}
