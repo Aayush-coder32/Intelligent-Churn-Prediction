@@ -114,6 +114,16 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(*args, **kwargs):
         if not session.get("user_id"):
+            if request.path.startswith("/api/") or wants_json_response():
+                return (
+                    jsonify(
+                        {
+                            "error": "Authentication required.",
+                            "login_url": url_for("login"),
+                        }
+                    ),
+                    401,
+                )
             flash("Please log in to continue.", "warning")
             return redirect(url_for("login"))
         return view(*args, **kwargs)
@@ -164,7 +174,8 @@ def serialize_prediction_row(row: sqlite3.Row) -> dict[str, Any]:
 
 def wants_json_response() -> bool:
     return (
-        request.is_json
+        request.path.startswith("/api/")
+        or request.is_json
         or request.args.get("format") == "json"
         or request.accept_mimetypes.best == "application/json"
     )

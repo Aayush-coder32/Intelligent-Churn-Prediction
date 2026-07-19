@@ -72,16 +72,12 @@ async function handlePredictionSubmit(event) {
             },
             body: JSON.stringify(payload),
         });
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.error || "Prediction request failed.");
-        }
+        const result = await ChurnIQ.parseApiResponse(response);
 
         renderResult(result);
         ChurnIQ.showToast("success", "Prediction generated", `Risk level: ${result.risk_level}`);
     } catch (error) {
-        ChurnIQ.showToast("error", "Prediction failed", error.message);
+        ChurnIQ.handleApiError(error, "Prediction failed");
     } finally {
         ChurnIQ.setLoadingState(false);
     }

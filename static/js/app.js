@@ -23,6 +23,35 @@ function showToast(icon, title, text = "") {
     });
 }
 
+async function parseApiResponse(response) {
+    const contentType = response.headers.get("content-type") || "";
+    const isJson = contentType.includes("application/json");
+    const payload = isJson ? await response.json() : null;
+
+    if (!response.ok) {
+        const message = payload?.error || `Request failed with status ${response.status}`;
+        const error = new Error(message);
+        error.status = response.status;
+        error.payload = payload;
+        throw error;
+    }
+
+    if (!isJson) {
+        throw new Error("Server returned a non-JSON response.");
+    }
+
+    return payload;
+}
+
+function handleApiError(error, fallbackTitle) {
+    if (error?.status === 401 && error?.payload?.login_url) {
+        showToast("warning", "Session required", "Please log in to continue.");
+        window.location.href = error.payload.login_url;
+        return;
+    }
+    showToast("error", fallbackTitle, error.message);
+}
+
 function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("churniq-theme", theme);
@@ -56,6 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.ChurnIQ = {
+    handleApiError,
+    parseApiResponse,
     setLoadingState,
     showToast,
 };

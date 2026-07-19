@@ -208,7 +208,8 @@ def load_telco_dataset(dataset_path: str | Path) -> pd.DataFrame:
 
 def clean_telco_dataframe(frame: pd.DataFrame) -> pd.DataFrame:
     cleaned = normalize_columns(frame.copy())
-    cleaned = cleaned.applymap(_standardize_string)
+    # `DataFrame.applymap` is not available across every pandas version we may run on.
+    cleaned = cleaned.apply(lambda column: column.map(_standardize_string))
     cleaned = cleaned.drop_duplicates()
 
     if "total_charges" in cleaned.columns:

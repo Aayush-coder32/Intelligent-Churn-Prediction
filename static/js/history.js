@@ -22,7 +22,7 @@ async function loadHistory(query = "") {
     try {
         const url = query ? `/api/history?q=${encodeURIComponent(query)}` : "/api/history";
         const response = await fetch(url);
-        const payload = await response.json();
+        const payload = await ChurnIQ.parseApiResponse(response);
 
         if (!payload.items.length) {
             tableBody.innerHTML = `
@@ -35,7 +35,7 @@ async function loadHistory(query = "") {
 
         tableBody.innerHTML = payload.items.map(buildHistoryRow).join("");
     } catch (error) {
-        ChurnIQ.showToast("error", "History failed to load", error.message);
+        ChurnIQ.handleApiError(error, "History failed to load");
     } finally {
         ChurnIQ.setLoadingState(false);
     }
@@ -58,14 +58,11 @@ async function deletePrediction(predictionId) {
         const response = await fetch(`/api/prediction/${predictionId}`, {
             method: "DELETE",
         });
-        const result = await response.json();
-        if (!response.ok) {
-            throw new Error(result.error || "Delete failed.");
-        }
+        const result = await ChurnIQ.parseApiResponse(response);
         ChurnIQ.showToast("success", result.message);
         loadHistory(document.getElementById("historySearch").value.trim());
     } catch (error) {
-        ChurnIQ.showToast("error", "Delete failed", error.message);
+        ChurnIQ.handleApiError(error, "Delete failed");
     }
 }
 

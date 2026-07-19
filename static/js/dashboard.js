@@ -50,7 +50,7 @@ async function loadDashboard() {
     ChurnIQ.setLoadingState(true);
     try {
         const response = await fetch("/api/dashboard");
-        const payload = await response.json();
+        const payload = await ChurnIQ.parseApiResponse(response);
 
         document.getElementById("cardTotalCustomers").textContent = payload.cards.total_customers ?? 0;
         document.getElementById("cardTotalPredictions").textContent = payload.cards.total_predictions ?? 0;
@@ -67,7 +67,7 @@ async function loadDashboard() {
         renderChart("chargesChart", "bar", payload.charts.monthly_charge_distribution, "#f59e0b");
         renderChart("tenureChart", "bar", payload.charts.tenure_distribution, "#3b82f6");
     } catch (error) {
-        ChurnIQ.showToast("error", "Dashboard failed to load", error.message);
+        ChurnIQ.handleApiError(error, "Dashboard failed to load");
     } finally {
         ChurnIQ.setLoadingState(false);
     }
