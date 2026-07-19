@@ -437,10 +437,10 @@ function renderBasicChart(canvasId, chartType, dataset, color) {
 }
 
 async function loadDashboard() {
-    ChurnIQ.setLoadingState(true);
+    ChurnNet.setLoadingState(true);
     try {
         const response = await fetch("/api/dashboard");
-        const payload = await ChurnIQ.parseApiResponse(response);
+        const payload = await ChurnNet.parseApiResponse(response);
 
         document.getElementById("cardTotalCustomers").textContent = payload.cards.total_customers ?? 0;
         document.getElementById("cardTotalPredictions").textContent = payload.cards.total_predictions ?? 0;
@@ -457,9 +457,9 @@ async function loadDashboard() {
         renderBasicChart("chargesChart", "bar", payload.charts.monthly_charge_distribution, "#f59e0b");
         renderBasicChart("tenureChart", "bar", payload.charts.tenure_distribution, "#3b82f6");
     } catch (error) {
-        ChurnIQ.handleApiError(error, "Dashboard failed to load");
+        ChurnNet.handleApiError(error, "Dashboard failed to load");
     } finally {
-        ChurnIQ.setLoadingState(false);
+        ChurnNet.setLoadingState(false);
     }
 }
 

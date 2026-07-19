@@ -18,11 +18,11 @@ function buildHistoryRow(item) {
 
 async function loadHistory(query = "") {
     const tableBody = document.getElementById("historyTableBody");
-    ChurnIQ.setLoadingState(true);
+    ChurnNet.setLoadingState(true);
     try {
         const url = query ? `/api/history?q=${encodeURIComponent(query)}` : "/api/history";
         const response = await fetch(url);
-        const payload = await ChurnIQ.parseApiResponse(response);
+        const payload = await ChurnNet.parseApiResponse(response);
 
         if (!payload.items.length) {
             tableBody.innerHTML = `
@@ -35,9 +35,9 @@ async function loadHistory(query = "") {
 
         tableBody.innerHTML = payload.items.map(buildHistoryRow).join("");
     } catch (error) {
-        ChurnIQ.handleApiError(error, "History failed to load");
+        ChurnNet.handleApiError(error, "History failed to load");
     } finally {
-        ChurnIQ.setLoadingState(false);
+        ChurnNet.setLoadingState(false);
     }
 }
 
@@ -58,11 +58,11 @@ async function deletePrediction(predictionId) {
         const response = await fetch(`/api/prediction/${predictionId}`, {
             method: "DELETE",
         });
-        const result = await ChurnIQ.parseApiResponse(response);
-        ChurnIQ.showToast("success", result.message);
+        const result = await ChurnNet.parseApiResponse(response);
+        ChurnNet.showToast("success", result.message);
         loadHistory(document.getElementById("historySearch").value.trim());
     } catch (error) {
-        ChurnIQ.handleApiError(error, "Delete failed");
+        ChurnNet.handleApiError(error, "Delete failed");
     }
 }
 

@@ -63,7 +63,7 @@ async function handlePredictionSubmit(event) {
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
 
-    ChurnIQ.setLoadingState(true);
+    ChurnNet.setLoadingState(true);
     try {
         const response = await fetch("/api/predict", {
             method: "POST",
@@ -72,14 +72,14 @@ async function handlePredictionSubmit(event) {
             },
             body: JSON.stringify(payload),
         });
-        const result = await ChurnIQ.parseApiResponse(response);
+        const result = await ChurnNet.parseApiResponse(response);
 
         renderResult(result);
-        ChurnIQ.showToast("success", "Prediction generated", `Risk level: ${result.risk_level}`);
+        ChurnNet.showToast("success", "Prediction generated", `Risk level: ${result.risk_level}`);
     } catch (error) {
-        ChurnIQ.handleApiError(error, "Prediction failed");
+        ChurnNet.handleApiError(error, "Prediction failed");
     } finally {
-        ChurnIQ.setLoadingState(false);
+        ChurnNet.setLoadingState(false);
     }
 }
 
