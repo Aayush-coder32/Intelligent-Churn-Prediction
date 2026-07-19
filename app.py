@@ -6,6 +6,7 @@ import json
 import os
 import sqlite3
 from collections import Counter, defaultdict
+from collections.abc import Mapping
 from datetime import datetime
 from functools import wraps
 from pathlib import Path
@@ -30,6 +31,13 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from werkzeug.security import check_password_hash, generate_password_hash
 
+try:
+    import psycopg
+    from psycopg.rows import dict_row
+except ImportError:  # pragma: no cover - optional for local SQLite-only runs
+    psycopg = None
+    dict_row = None
+
 from predict import ModelNotReadyError, PredictionService
 from preprocess import DATASET_FILENAME, FORM_FIELDS, load_telco_dataset
 
@@ -40,11 +48,86 @@ REPORTS_DIR = BASE_DIR / "reports"
 DATASET_PATH = BASE_DIR / "dataset" / DATASET_FILENAME
 MODEL_DIR = BASE_DIR / "model"
 
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = f"postgresql://{DATABASE_URL[len('postgres://'):]}"
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "replace-this-with-a-secure-key")
+app.config["DATABASE_URL"] = DATABASE_URL or None
+app.config["DATABASE_ENGINE"] = "postgres" if DATABASE_URL and not DATABASE_URL.startswith("sqlite:///") else "sqlite"
 app.config["DATABASE"] = DATABASE_PATH
 
 prediction_service = PredictionService(BASE_DIR / "model")
+
+if DATABASE_URL.startswith("sqlite:///"):
+    app.config["DATABASE"] = Path(DATABASE_URL.replace("sqlite:///", "", 1))
+
+
+SQLITE_SCHEMA = [
+    """
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS predictions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        customer_name TEXT NOT NULL,
+        input_json TEXT NOT NULL,
+        prediction_label TEXT NOT NULL,
+        churn_probability REAL NOT NULL,
+        risk_level TEXT NOT NULL,
+        recommendations_json TEXT NOT NULL,
+        explanation_json TEXT NOT NULL,
+        monthly_charges REAL,
+        tenure INTEGER,
+        contract TEXT,
+        gender TEXT,
+        payment_method TEXT,
+        internet_service TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+    """,
+]
+
+POSTGRES_SCHEMA = [
+    """
+    CREATE TABLE IF NOT EXISTS users (
+        id BIGSERIAL PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS predictions (
+        id BIGSERIAL PRIMARY KEY,
+        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        customer_name TEXT NOT NULL,
+        input_json TEXT NOT NULL,
+        prediction_label TEXT NOT NULL,
+        churn_probability DOUBLE PRECISION NOT NULL,
+        risk_level TEXT NOT NULL,
+        recommendations_json TEXT NOT NULL,
+        explanation_json TEXT NOT NULL,
+        monthly_charges DOUBLE PRECISION,
+        tenure INTEGER,
+        contract TEXT,
+        gender TEXT,
+        payment_method TEXT,
+        internet_service TEXT,
+        created_at TEXT NOT NULL
+    )
+    """,
+]
 
 
 def ensure_directories() -> None:
@@ -61,10 +144,24 @@ def ensure_directories() -> None:
         directory.mkdir(parents=True, exist_ok=True)
 
 
-def get_db() -> sqlite3.Connection:
+def using_postgres() -> bool:
+    return app.config["DATABASE_ENGINE"] == "postgres"
+
+
+def get_db() -> Any:
     if "db" not in g:
-        g.db = sqlite3.connect(app.config["DATABASE"])
-        g.db.row_factory = sqlite3.Row
+        if using_postgres():
+            if psycopg is None:
+                raise RuntimeError(
+                    "PostgreSQL support requires `psycopg[binary]`. Install dependencies again before using DATABASE_URL."
+                )
+            g.db = psycopg.connect(
+                app.config["DATABASE_URL"],
+                row_factory=dict_row,
+            )
+        else:
+            g.db = sqlite3.connect(app.config["DATABASE"])
+            g.db.row_factory = sqlite3.Row
     return g.db
 
 
@@ -77,38 +174,50 @@ def close_db(exception: Exception | None) -> None:
 
 def init_db() -> None:
     db = get_db()
-    db.executescript(
-        """
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            full_name TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            password_hash TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS predictions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            customer_name TEXT NOT NULL,
-            input_json TEXT NOT NULL,
-            prediction_label TEXT NOT NULL,
-            churn_probability REAL NOT NULL,
-            risk_level TEXT NOT NULL,
-            recommendations_json TEXT NOT NULL,
-            explanation_json TEXT NOT NULL,
-            monthly_charges REAL,
-            tenure INTEGER,
-            contract TEXT,
-            gender TEXT,
-            payment_method TEXT,
-            internet_service TEXT,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        );
-        """
-    )
+    statements = POSTGRES_SCHEMA if using_postgres() else SQLITE_SCHEMA
+    if using_postgres():
+        with db.cursor() as cursor:
+            for statement in statements:
+                cursor.execute(statement)
+    else:
+        for statement in statements:
+            db.execute(statement)
     db.commit()
+
+
+def adapt_query(query: str) -> str:
+    return query.replace("?", "%s") if using_postgres() else query
+
+
+def execute_write(query: str, parameters: tuple[Any, ...] = ()) -> None:
+    db = get_db()
+    query = adapt_query(query)
+    if using_postgres():
+        with db.cursor() as cursor:
+            cursor.execute(query, parameters)
+    else:
+        db.execute(query, parameters)
+    db.commit()
+
+
+def execute_insert(query: str, parameters: tuple[Any, ...] = (), id_column: str = "id") -> int:
+    db = get_db()
+    query = adapt_query(query).strip().rstrip(";")
+    if using_postgres():
+        query = f"{query} RETURNING {id_column}"
+        with db.cursor() as cursor:
+            cursor.execute(query, parameters)
+            row = cursor.fetchone()
+        db.commit()
+        if row is None:
+            raise RuntimeError("Database insert did not return a row id.")
+        if isinstance(row, Mapping):
+            return int(row[id_column])
+        return int(row[0])
+
+    cursor = db.execute(query, parameters)
+    db.commit()
+    return int(cursor.lastrowid)
 
 
 def login_required(view):
@@ -132,12 +241,24 @@ def login_required(view):
     return wrapped_view
 
 
-def fetch_one(query: str, parameters: tuple[Any, ...] = ()) -> sqlite3.Row | None:
-    return get_db().execute(query, parameters).fetchone()
+def fetch_one(query: str, parameters: tuple[Any, ...] = ()) -> Any | None:
+    db = get_db()
+    query = adapt_query(query)
+    if using_postgres():
+        with db.cursor() as cursor:
+            cursor.execute(query, parameters)
+            return cursor.fetchone()
+    return db.execute(query, parameters).fetchone()
 
 
-def fetch_all(query: str, parameters: tuple[Any, ...] = ()) -> list[sqlite3.Row]:
-    return get_db().execute(query, parameters).fetchall()
+def fetch_all(query: str, parameters: tuple[Any, ...] = ()) -> list[Any]:
+    db = get_db()
+    query = adapt_query(query)
+    if using_postgres():
+        with db.cursor() as cursor:
+            cursor.execute(query, parameters)
+            return cursor.fetchall()
+    return db.execute(query, parameters).fetchall()
 
 
 def current_user() -> sqlite3.Row | None:
@@ -156,7 +277,7 @@ def inject_template_context() -> dict[str, Any]:
     }
 
 
-def serialize_prediction_row(row: sqlite3.Row) -> dict[str, Any]:
+def serialize_prediction_row(row: Any) -> dict[str, Any]:
     recommendations = json.loads(row["recommendations_json"])
     explanation = json.loads(row["explanation_json"])
     return {
@@ -187,7 +308,7 @@ def save_prediction(user_id: int, payload: dict[str, Any], result: dict[str, Any
     probability_score = float(result["probability_score"])
     input_data = result["input"]
     db = get_db()
-    cursor = db.execute(
+    prediction_id = execute_insert(
         """
         INSERT INTO predictions (
             user_id,
@@ -226,8 +347,7 @@ def save_prediction(user_id: int, payload: dict[str, Any], result: dict[str, Any
             datetime.utcnow().isoformat(timespec="seconds"),
         ),
     )
-    db.commit()
-    return int(cursor.lastrowid)
+    return prediction_id
 
 
 def load_dataset_summary() -> dict[str, Any]:
@@ -373,7 +493,7 @@ def build_dashboard_payload(user_id: int) -> dict[str, Any]:
     }
 
 
-def create_pdf_report(row: sqlite3.Row) -> Path:
+def create_pdf_report(row: Any) -> Path:
     report_path = REPORTS_DIR / f"prediction_{row['id']}.pdf"
     input_data = json.loads(row["input_json"])
     recommendations = json.loads(row["recommendations_json"])
@@ -505,11 +625,10 @@ def signup():
             flash("An account with that email already exists.", "warning")
             return render_template("signup.html")
 
-        get_db().execute(
+        execute_write(
             "INSERT INTO users (full_name, email, password_hash, created_at) VALUES (?, ?, ?, ?)",
             (full_name, email, generate_password_hash(password), datetime.utcnow().isoformat(timespec="seconds")),
         )
-        get_db().commit()
         flash("Account created successfully. Please log in.", "success")
         return redirect(url_for("login"))
 
@@ -626,11 +745,10 @@ def delete_prediction(prediction_id: int | None = None):
         return jsonify({"error": "Prediction id is required."}), 400
 
     db = get_db()
-    db.execute(
+    execute_write(
         "DELETE FROM predictions WHERE id = ? AND user_id = ?",
         (prediction_id, session["user_id"]),
     )
-    db.commit()
     return jsonify({"message": "Prediction deleted successfully."})
 
 
