@@ -111,18 +111,43 @@ Saved artifacts:
 
 ## Training
 
-1. Install dependencies:
+1. Install dependencies.
 
-```bash
-pip install -r requirements.txt
+Recommended on this Windows machine:
+
+```powershell
+.\setup_windows.ps1
+.\.venv313\Scripts\Activate.ps1
 ```
 
-Windows/Conda-friendly option:
+That script:
+
+- creates a fresh `.venv313`
+- uses the local 64-bit Python 3.13 install
+- upgrades `pip`, `setuptools`, and `wheel`
+- installs only wheel packages with a longer network timeout
+- installs the smaller core dependency set from `requirements.txt`
+
+Optional model/explainability extras:
+
+```powershell
+.\.venv313\Scripts\python.exe -m pip install --only-binary=:all: --default-timeout 120 --retries 10 -r requirements-optional.txt
+```
+
+Alternative manual setup:
+
+```powershell
+python -m venv .venv313
+.\.venv313\Scripts\Activate.ps1
+python -m pip install --upgrade pip setuptools wheel --default-timeout 120 --retries 10
+pip install --only-binary=:all: --default-timeout 120 --retries 10 -r requirements.txt
+```
+
+Conda fallback:
 
 ```powershell
 conda env create -f environment.yml
 conda activate churniq311
-python -m pip install --upgrade pip setuptools wheel
 ```
 
 2. Add the dataset to `dataset/`.
@@ -139,6 +164,16 @@ This will:
 - select the best performer
 - save evaluation plots under `model/`
 - save EDA images under `static/images/eda/`
+
+If `requirements-optional.txt` is not installed, training still works with:
+
+- Logistic Regression
+- Decision Tree
+- Random Forest
+- Gradient Boosting
+- SVM
+
+The app already treats SHAP, XGBoost, LightGBM, and CatBoost as optional and falls back gracefully when they are unavailable.
 
 ## Run The App
 
