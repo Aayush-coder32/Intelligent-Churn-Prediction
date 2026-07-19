@@ -1,6 +1,6 @@
-# ChurnIQ: Customer Churn Prediction System
+# ChurnNet: Customer Churn Prediction System
 
-ChurnIQ is a production-style customer churn prediction platform built with Flask, scikit-learn, SQLite, Bootstrap, Chart.js, and SHAP-style explanations. It predicts churn risk for telecom customers, explains the main drivers behind each prediction, stores prediction history, generates PDF reports, and exposes REST endpoints for programmatic access.
+ChurnNet is a production-style customer churn prediction platform built with Flask, scikit-learn, SQLite, Bootstrap, Chart.js, and SHAP-style explanations. It predicts churn risk for telecom customers, explains the main drivers behind each prediction, stores prediction history, generates PDF reports, and exposes REST endpoints for programmatic access.
 
 ## Highlights
 
@@ -147,7 +147,7 @@ Conda fallback:
 
 ```powershell
 conda env create -f environment.yml
-conda activate churniq311
+conda activate churnnet311
 ```
 
 2. Add the dataset to `dataset/`.
