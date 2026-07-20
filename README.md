@@ -1,17 +1,29 @@
 # ChurnNet: Customer Churn Prediction System
 
-ChurnNet is a production-style customer churn prediction platform built with Flask, scikit-learn, SQLite/PostgreSQL, Bootstrap, Chart.js, and SHAP-style explanations. It predicts churn risk for telecom customers, explains the main drivers behind each prediction, stores prediction history, generates PDF reports, and exposes REST endpoints for programmatic access.
+ChurnNet is a production-style customer churn prediction platform built with Flask, scikit-learn, SQLite/PostgreSQL, Bootstrap, Chart.js, and explainable ML outputs. It predicts churn risk for telecom customers, highlights the main drivers behind each result, stores prediction history, generates PDF reports, and exposes REST endpoints for programmatic access.
+
+## Demo Gallery
+
+The visuals below are repo-local illustrative mockups aligned to the current templates, so the README stays demo-friendly even without a live deployment.
+
+![ChurnNet demo overview](docs/assets/demo-overview.svg)
+
+![ChurnNet operations demo](docs/assets/demo-operations.svg)
+
+## Pictorial Flowchart
+
+![ChurnNet pictorial flowchart](docs/assets/project-flowchart.svg)
 
 ## Highlights
 
 - Authentication with signup, login, logout, and session-based access control
-- Churn prediction form with probability score, risk level, and business recommendations
-- Explainability layer with SHAP-first contributions and model-aware fallbacks
+- Churn prediction form with probability score, risk level, business recommendations, and downloadable PDF output
+- Explainability layer with feature-driver summaries for positive and negative churn signals
 - Analytics dashboard with KPI cards and multiple Chart.js visualizations
-- Prediction history with search, delete, CSV export, and downloadable PDF reports
-- ML training pipeline with feature engineering, model comparison, evaluation, and auto-selection of the best model
-- EDA image generation saved automatically to `static/images/eda/`
-- Render-ready deployment files: `Procfile`, `runtime.txt`, `requirements.txt`
+- Prediction history with search, delete, CSV export, and report download support
+- ML training pipeline with preprocessing, feature engineering, model comparison, evaluation, and best-model selection
+- SQLite for local development and PostgreSQL support through `DATABASE_URL`
+- Render-ready deployment files: `Procfile`, `runtime.txt`, and `requirements.txt`
 
 ## Tech Stack
 
@@ -23,13 +35,18 @@ ChurnNet is a production-style customer churn prediction platform built with Fla
 - PostgreSQL
 - Pandas
 - NumPy
-- Scikit-Learn
+- Scikit-learn
+- Matplotlib
+- Seaborn
+- ReportLab
+- Joblib
+
+### Optional ML Extras
+
+- SHAP
 - XGBoost
 - LightGBM
 - CatBoost
-- SHAP
-- Joblib
-- ReportLab
 
 ### Frontend
 
@@ -40,37 +57,51 @@ ChurnNet is a production-style customer churn prediction platform built with Fla
 - Chart.js
 - SweetAlert2
 
+## How It Works
+
+1. Load the Telco Customer Churn dataset from `dataset/WA_Fn-UseC_-Telco-Customer-Churn.csv`.
+2. Clean and normalize the data in `preprocess.py`.
+3. Engineer features such as `avg_monthly_spend`, `tenure_group`, `service_count`, `premium_customer`, and `high_risk_customer`.
+4. Train and compare multiple models in `train.py`.
+5. Save the best model plus encoder, scaler, and metadata under `model/`.
+6. Serve live predictions through the Flask app in `app.py`.
+7. Turn predictions into dashboards, history records, PDF reports, and API responses.
+
 ## Project Structure
 
 ```text
 ML project/
-├── app.py
-├── feature_engineering.py
-├── preprocess.py
-├── predict.py
-├── train.py
-├── requirements.txt
-├── Procfile
-├── runtime.txt
-├── README.md
-├── dataset/
-├── model/
-├── reports/
-├── static/
-│   ├── css/
-│   ├── images/
-│   │   └── eda/
-│   └── js/
-└── templates/
+|-- app.py
+|-- feature_engineering.py
+|-- predict.py
+|-- preprocess.py
+|-- train.py
+|-- setup_windows.ps1
+|-- requirements.txt
+|-- requirements-optional.txt
+|-- runtime.txt
+|-- Procfile
+|-- README.md
+|-- dataset/
+|-- docs/
+|   `-- assets/
+|-- instance/
+|-- model/
+|-- reports/
+|-- static/
+|   |-- css/
+|   |-- images/
+|   `-- js/
+`-- templates/
 ```
 
 ## Dataset
 
-This project expects the Kaggle dataset:
+This project expects the Kaggle Telco Customer Churn dataset:
 
 - `WA_Fn-UseC_-Telco-Customer-Churn.csv`
 
-Place the file here before training:
+Place it here before training:
 
 ```text
 dataset/WA_Fn-UseC_-Telco-Customer-Churn.csv
@@ -86,18 +117,11 @@ The training workflow in [train.py](/C:/Users/My Pc/Desktop/ML project/train.py)
 - Duplicate removal
 - Column normalization
 - Numeric conversion for `total_charges`, `monthly_charges`, `tenure`, and `senior_citizen`
-- Feature engineering such as `avg_monthly_spend`, `tenure_group`, `service_count`, `premium_customer`, and `high_risk_customer`
+- Feature engineering for spend, tenure, service usage, and risk segmentation
 - One-hot encoding for categorical features
 - Standard scaling for numeric features
-- Model comparison across:
-  - Logistic Regression
-  - Decision Tree
-  - Random Forest
-  - Gradient Boosting
-  - SVM
-  - XGBoost if installed
-  - LightGBM if installed
-  - CatBoost if installed
+- Model comparison across Logistic Regression, Decision Tree, Random Forest, Gradient Boosting, and SVM
+- Optional training with XGBoost, LightGBM, and CatBoost when extras are installed
 - Best-model selection using ROC AUC
 
 Saved artifacts:
@@ -109,12 +133,15 @@ Saved artifacts:
 - `model/metadata.json`
 - `model/metrics.json`
 - `model/model_comparison.csv`
+- `model/model_comparison.png`
+- `model/confusion_matrix.png`
+- `model/roc_curve.png`
 
-## Training
+EDA images are automatically saved under `static/images/eda/`.
 
-1. Install dependencies.
+## Setup
 
-Recommended on this Windows machine:
+### Recommended on Windows
 
 ```powershell
 .\setup_windows.ps1
@@ -123,37 +150,38 @@ Recommended on this Windows machine:
 
 That script:
 
-- creates a fresh `.venv313`
-- uses the local 64-bit Python 3.13 install
+- creates `.venv313` if it does not already exist
+- prefers the local Python 3.13 install when available
 - upgrades `pip`, `setuptools`, and `wheel`
-- installs only wheel packages with a longer network timeout
-- installs the smaller core dependency set from `requirements.txt`
+- installs the core dependencies from `requirements.txt`
 
-Optional model/explainability extras:
+Optional ML extras:
 
 ```powershell
 .\.venv313\Scripts\python.exe -m pip install --only-binary=:all: --default-timeout 120 --retries 10 -r requirements-optional.txt
 ```
 
-Alternative manual setup:
+### Manual setup
 
 ```powershell
-python -m venv .venv313
-.\.venv313\Scripts\Activate.ps1
-python -m pip install --upgrade pip setuptools wheel --default-timeout 120 --retries 10
-pip install --only-binary=:all: --default-timeout 120 --retries 10 -r requirements.txt
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
 ```
 
-Conda fallback:
+### Conda fallback
 
 ```powershell
 conda env create -f environment.yml
 conda activate churnnet311
 ```
 
-2. Add the dataset to `dataset/`.
+## Training
 
-3. Train the model:
+1. Add the dataset to `dataset/`.
+2. Activate your environment.
+3. Run:
 
 ```bash
 python train.py
@@ -166,15 +194,7 @@ This will:
 - save evaluation plots under `model/`
 - save EDA images under `static/images/eda/`
 
-If `requirements-optional.txt` is not installed, training still works with:
-
-- Logistic Regression
-- Decision Tree
-- Random Forest
-- Gradient Boosting
-- SVM
-
-The app already treats SHAP, XGBoost, LightGBM, and CatBoost as optional and falls back gracefully when they are unavailable.
+If optional dependencies are not installed, the app still works with the core scikit-learn models.
 
 ## Run The App
 
@@ -190,13 +210,12 @@ http://127.0.0.1:5000
 
 ## Database Modes
 
-ChurnNet now supports two database modes:
+ChurnNet supports two database modes:
 
-- Local development: SQLite at `instance/churn_app.db`
-- Deployment: PostgreSQL via `DATABASE_URL`
+- Local development with SQLite at `instance/churn_app.db`
+- Deployment with PostgreSQL through `DATABASE_URL`
 
-If `DATABASE_URL` is set, the app automatically uses PostgreSQL and creates the required tables at startup.
-If `DATABASE_URL` is not set, it falls back to local SQLite.
+If `DATABASE_URL` is set, the app automatically uses PostgreSQL and creates the required tables at startup. Otherwise it falls back to SQLite.
 
 ## Product Features
 
@@ -214,8 +233,9 @@ If `DATABASE_URL` is not set, it falls back to local SQLite.
 - Probability score
 - Risk level
 - Explanation summary
-- Positive and negative feature drivers
+- Positive and negative driver cards
 - Actionable retention recommendations
+- PDF report download
 
 ### Dashboard
 
@@ -250,7 +270,7 @@ Primary API routes:
 - `GET /api/customers`
 - `DELETE /api/prediction/<id>`
 
-Friendly aliases matching the brief:
+Friendly aliases:
 
 - `POST /predict`
 - `GET /history?format=json`
@@ -283,19 +303,9 @@ Reports are generated into `reports/`.
 ## Deployment On Render
 
 1. Push the project to GitHub.
-2. Create a new Render Web Service.
-3. Set the build command:
-
-```bash
-pip install -r requirements.txt
-```
-
-4. Set the start command:
-
-```bash
-gunicorn app:app
-```
-
+2. Create a new Render web service.
+3. Set the build command to `pip install -r requirements.txt`.
+4. Set the start command to `gunicorn app:app`.
 5. Add environment variables:
 
 - `SECRET_KEY`
@@ -310,19 +320,8 @@ postgresql://username:password@host/database?sslmode=require
 ```
 
 6. Set `PYTHON_VERSION` to a supported `3.11.x` version in Render.
-7. Make sure model artifacts are created before deployment, or add the dataset and run `python train.py` during your release workflow.
-8. Because free Render web services do not support persistent disks, PostgreSQL is the recommended way to persist signup users and prediction history on free hosting.
-
-## Suggested Demo Assets
-
-After training and running the app locally, add screenshots for:
-
-- Login page
-- Dashboard
-- Prediction form
-- Prediction result panel
-- Prediction history table
-- PDF report preview
+7. Make sure model artifacts are created before deployment, or run `python train.py` during your release workflow.
+8. Because free Render web services do not support persistent disks, PostgreSQL is the recommended way to persist signup users and prediction history.
 
 ## Future Scope
 
@@ -330,13 +329,13 @@ After training and running the app locally, add screenshots for:
 - Admin dashboard
 - Role-based authentication
 - Email alerts for high-risk customers
-- K-Means customer segmentation
+- Customer segmentation
 - LIME explanations
 - Docker support
 - GitHub Actions CI/CD
-- Retraining module
+- Retraining workflow
 - Power BI integration
 
 ## License
 
-Use this project for learning, portfolio, and interview preparation. If you plan to publish it publicly, add your preferred open-source license file before release.
+Use this project for learning, portfolio, and interview preparation. If you plan to publish it publicly, add your preferred open-source license before release.
