@@ -172,7 +172,8 @@ a {
 }
 
 .theme-toggle,
-.btn-accent {
+.btn-accent,
+.btn-outline-light {
     border: none;
     border-radius: 999px;
     background: linear-gradient(135deg, var(--accent), #f59e0b);
@@ -180,24 +181,16 @@ a {
     padding: 0.9rem 1.35rem;
     font-weight: 700;
     box-shadow: 0 16px 32px rgba(15, 118, 110, 0.22);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .btn-accent:hover,
-.theme-toggle:hover {
-    color: #fff;
-    background: linear-gradient(135deg, var(--accent-strong), #d97706);
-}
-
-.btn-outline-light {
-    color: var(--text-primary);
-    border-color: rgba(148, 163, 184, 0.4);
-    background: rgba(255, 255, 255, 0.18);
-}
-
+.theme-toggle:hover,
 .btn-outline-light:hover {
     color: #fff;
-    background: var(--text-primary);
-    border-color: var(--text-primary);
+    background: linear-gradient(135deg, var(--accent-strong), #d97706);
+    transform: translateY(-1px);
+    box-shadow: 0 18px 36px rgba(15, 118, 110, 0.28);
 }
 
 .dashboard-grid {
