@@ -1408,8 +1408,12 @@ a {
 .capability-label {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.4rem;
     width: fit-content;
+    max-width: calc(100% - 1rem);
+    justify-self: center;
+    margin: 0 auto;
     padding: 0.45rem 0.78rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.72);
@@ -1418,6 +1422,7 @@ a {
     font-size: 0.84rem;
     font-weight: 800;
     letter-spacing: 0.04em;
+    text-align: center;
 }
 
 [data-theme="dark"] .capability-label {
