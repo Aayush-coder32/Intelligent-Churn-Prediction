@@ -69,31 +69,28 @@ The visuals below are repo-local illustrative mockups aligned to the current tem
 
 ## Project Structure
 
-```text
-ML project/
-|-- app.py
-|-- feature_engineering.py
-|-- predict.py
-|-- preprocess.py
-|-- train.py
-|-- setup_windows.ps1
-|-- requirements.txt
-|-- requirements-optional.txt
-|-- runtime.txt
-|-- Procfile
-|-- README.md
-|-- dataset/
-|-- docs/
-|   `-- assets/
-|-- instance/
-|-- model/
-|-- reports/
-|-- static/
-|   |-- css/
-|   |-- images/
-|   `-- js/
-`-- templates/
-```
+| Path | Purpose |
+| --- | --- |
+| `app.py` | Main Flask application with routes, auth flow, dashboard APIs, prediction handling, and report generation |
+| `feature_engineering.py` | Feature creation helpers used by the ML pipeline |
+| `predict.py` | Prediction service that loads saved model artifacts and returns churn outputs |
+| `preprocess.py` | Dataset loading, cleaning, normalization, and form field definitions |
+| `train.py` | Model training, comparison, evaluation, and artifact export pipeline |
+| `setup_windows.ps1` | Windows setup script for creating the environment and installing dependencies |
+| `requirements.txt` | Core Python dependencies |
+| `requirements-optional.txt` | Optional ML and explainability dependencies |
+| `runtime.txt` | Runtime version hint for deployment |
+| `Procfile` | Process definition for deployment platforms such as Render |
+| `README.md` | Project documentation |
+| `dataset/` | Dataset storage location for the Telco Customer Churn CSV |
+| `docs/assets/` | README demo visuals and pictorial flowchart assets |
+| `instance/` | Local SQLite database and instance-specific runtime files |
+| `model/` | Saved model, encoder, scaler, metrics, plots, and metadata artifacts |
+| `reports/` | Generated PDF churn reports |
+| `static/css/` | Stylesheets for the frontend |
+| `static/images/` | EDA charts and image assets |
+| `static/js/` | Frontend JavaScript for dashboard, history, app behavior, and prediction flow |
+| `templates/` | Jinja HTML templates for landing, auth, dashboard, history, and prediction pages |
 
 ## Dataset
 
